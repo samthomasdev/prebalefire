@@ -12,7 +12,6 @@ RESOURCES = sdl2.ext.Resources(__file__, 'assets')
 spritesheets = dict(floor='ss_floor.png', character='hello.bmp')
 
 
-
 class BunkerScene:
 
 
