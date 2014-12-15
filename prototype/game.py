@@ -3,7 +3,7 @@
 import sys
 import sdl2
 import sdl2.ext
-
+from bunkerScene import BunkerScene
 
 RESOURCES = sdl2.ext.Resources(__file__, 'assets')
 
@@ -13,10 +13,6 @@ rectHeight = 70
 
 x1 = 100
 y1 = 100
-
-
-
-
 
 
 
@@ -39,7 +35,6 @@ def run():
 	
 	renderer.clear(color=sdl2.ext.Color(200,200,200))
 	spriterenderer.render(ss_floor)
-
 	# Spritesheet clip draw
 	srcrect = (140,0,rectWidth,rectHeight)
 	dstrect = (x1,y1,rectWidth,rectHeight)
@@ -48,10 +43,14 @@ def run():
 
 
 
+
+	scene_bunker = BunkerScene()	
+	scene_bunker.loadSpritesheets(factory)
+	scene_bunker.draw(renderer)
+
+
+	# Display the changes
 	renderer.present()
-
-
-
 
 
 	# Main game loop
