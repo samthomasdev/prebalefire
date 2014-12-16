@@ -4,7 +4,7 @@
 
 
 
-
+'''
 
 class DrawLayer:
 	def __init__(self):
@@ -12,22 +12,32 @@ class DrawLayer:
 
 	def draw(renderer):
 		
-
+'''
 
 class TiledMapLayer():
-	def __init__(self):
-		self.tiles = None
+	def __init__(self, spritesheet, tiles):
+		self.spritesheet = spritesheet
+		self.tiles = tiles
+
+
+	def draw(self, renderer, offset=[0,0], zoom=0):
+		listWidth = len(self.tiles)
+		listHeight = len(self.tiles[0])
+		for x in xrange(0, listWidth):
+			for y in xrange(0, listHeight):
+				source = self.tiles[x][y].source
+				dst = self.tiles[x][y].destination
+				
+				destination =  (dst[0]+offset[0]+x*zoom,
+						dst[1]+offset[1]+y*zoom,
+						dst[2]+zoom,
+						dst[3]+zoom)
+				renderer.copy(self.spritesheet, source, destination)
 
 
 
-	def draw(renderer):
-		for tile in tiles:
-			
 
-
-
-
-
+'''
 
 class DecoratorLayer():
 	def __init__(self):
@@ -46,7 +56,7 @@ class EntityLayer():
 
 
 
-
+'''
 
 
 

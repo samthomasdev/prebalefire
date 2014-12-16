@@ -9,8 +9,9 @@
 # !HARDCODED
 # spritesheet: ss_floor.png
 class FLOORCODES:
-	h = 70 # height
-	w = 70 # width
+	TILESIZE = 70
+	h = TILESIZE # height
+	w = TILESIZE # width
 
 	TOP = 		(280,0,h,w)
 	BOTTOM = 	(70,0,h,w)

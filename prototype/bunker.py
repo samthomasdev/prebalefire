@@ -8,11 +8,13 @@ import sdl2
 class Bunker:
 
 	
-	def __init__(self, width=10, numFloors=1, floorHeight=3):
+	def __init__(self, width=10, numFloors=1, floorHeight=4):
 		self.width = width
 		self.numFloors = numFloors
 		self.floorHeight = floorHeight
 		self.floors = genFloors(numFloors,floorHeight,width)
+
+		#self.GridSize = lambda: (self.width, self.numFloors*self.floorHeight)
 
 	def __str__(self):
 		s = ''
@@ -36,10 +38,8 @@ class Floor:
 
 def genFloors(numFloors,height, width):
 	floors = []
-	i = 0
-	while (i < numFloors):
+	for i in xrange(0,numFloors):
 		floors.append(Floor(i,height,width))
-		i += 1
 	return floors
 
 
