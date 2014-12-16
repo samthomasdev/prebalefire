@@ -12,10 +12,10 @@ class FLOORCODES:
 	h = 70 # height
 	w = 70 # width
 
-	TOP = (70,0,h,w)
-	BOTTOM = (0,0,h,w)
-	WALL = (140,0,h,w)
-
+	TOP = 		(280,0,h,w)
+	BOTTOM = 	(70,0,h,w)
+	WALL = 		(210,0,h,w)
+	
 
 
 

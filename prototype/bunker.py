@@ -8,7 +8,7 @@ import sdl2
 class Bunker:
 
 	
-	def __init__(self, width=10, numFloors=1, floorHeight=4):
+	def __init__(self, width=10, numFloors=1, floorHeight=3):
 		self.width = width
 		self.numFloors = numFloors
 		self.floorHeight = floorHeight
