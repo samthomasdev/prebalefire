@@ -15,7 +15,7 @@ spritesheets = dict(floor='ss_floor.png', character='hello.bmp')
 class BunkerScene:
 
 	def __init__(self):
-		self.bunker = bunker.Bunker()		
+		self.bunker = bunker.Bunker(width=30,numFloors=4)		
 		self.floorsrc = self.gen_floorsrc()
 		self.floordst = self.gen_floordst()
 
@@ -54,10 +54,10 @@ class BunkerScene:
 			col = []
 			for y in xrange(0,height):
 				rect = None
-				if(y == 0):
-					rect = FLOOR.TOP
-				elif(y == height-1):
+				if(y == height-1):
 					rect = FLOOR.BOTTOM
+				#elif(y == 0):
+				#	rect = FLOOR.TOP
 				else:
 					rect = FLOOR.WALL
 				col.append(rect)
@@ -90,10 +90,16 @@ class BunkerScene:
 		self.ss_floor = factory.from_image(RESOURCES.get_path(spritesheets['floor']))
 
 	def draw(self, renderer):
-		for x in xrange(0,self.bunker.width):
-			for y in xrange(0,self.bunker.floorHeight):
-				renderer.copy(self.ss_floor, self.floorsrc[x][y], self.floordst[x][y])
-
+		h = FLOOR.TOP[3] # tile height (in pixels)
+		floorOffsetY = h * self.bunker.floorHeight # the y-offset for each floor (in pixels)
+		for f in self.bunker.floors:
+			offset = f.floorNumber * floorOffsetY # the y-offset for this floor
+			for x in xrange(0,self.bunker.width):
+				for y in xrange(0,self.bunker.floorHeight):
+					src = self.floorsrc[x][y]
+					dst = self.floordst[x][y]
+					offsetRect = (dst[0], dst[1]+offset, dst[2], dst[3]) # the offset destination rectangle
+					renderer.copy(self.ss_floor, src, offsetRect)
 
 
 

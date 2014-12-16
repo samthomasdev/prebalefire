@@ -20,6 +20,7 @@ class FLOORCODES:
 
 
 # A template class to make the hardcoding easier.
+# spritesheet: TODO
 class CODETEMPLATE:
 	h = 0 # height
 	w = 0 # width
