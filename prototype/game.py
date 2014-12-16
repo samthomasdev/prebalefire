@@ -6,13 +6,15 @@ import sdl2.ext
 from bunkerScene import BunkerScene
 
 RESOURCES = sdl2.ext.Resources(__file__, 'assets')
-
+CONFIG = sdl2.ext.Resources(__file__, 'config')
 
 def run():
-	## Window Setup ##
+
+	## Window setup ##
 	sdl2.ext.init()
 	window = sdl2.ext.Window('prebalefire prototype', size=(1200,900))
 	window.show()
+
 
 	## Render Initialization ## 
 	renderer = sdl2.ext.Renderer(window)
