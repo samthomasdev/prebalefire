@@ -27,9 +27,9 @@ def run():
 
 	
 	## Draw ##	
-	renderer.clear(color=sdl2.ext.Color(140,150,150))
+	renderer.clear(color=sdl2.ext.Color(240,220,200))
 
-	scene_bunker = BunkerScene()	
+	scene_bunker = BunkerScene()
 	scene_bunker.loadSpritesheets(factory)
 	scene_bunker.draw(renderer)
 
@@ -43,13 +43,27 @@ def run():
 	while running:
 		events = sdl2.ext.get_events()
 		for event in events:
-			if event.type == sdl2.SDL_QUIT:
+			if event.type == sdl2.SDL_MOUSEWHEEL:
+				if event.wheel.y != 0:
+					scene_bunker.zoom(event.wheel.y)
+			elif event.type == sdl2.SDL_KEYDOWN:
+				if event.key.keysym.sym == sdl2.SDLK_UP:
+					scene_bunker.panY(1);
+				elif event.key.keysym.sym == sdl2.SDLK_DOWN:
+					scene_bunker.panY(-1);
+				elif event.key.keysym.sym == sdl2.SDLK_LEFT:
+					scene_bunker.panX(1);
+				elif event.key.keysym.sym == sdl2.SDLK_RIGHT:
+					scene_bunker.panX(-1);
+				elif event.key.keysym.sym == sdl2.SDLK_ESCAPE:
+					running = False
+					break
+			elif event.type == sdl2.SDL_QUIT:
 				running = False
 				break
-			if event.type == sdl2.SDL_KEYDOWN:
-				if event.key.keysym.sym == sdl2.SDLK_ESCAPE:
-					running = False
-				break
+		renderer.clear(color=sdl2.ext.Color(240,220,200))
+		scene_bunker.draw(renderer)
+		renderer.present()
 		window.refresh()
 	sdl2.ext.quit()
 	return 0				

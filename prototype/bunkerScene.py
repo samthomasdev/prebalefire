@@ -21,13 +21,22 @@ class Camera:
 		self.zoomIncrement = zoomIncrement
 		self.panOffset = panOffset
 		self.panIncrement = panIncrement
+	def __str__(self):
+		s = '\nCamera State:\n'
+		s += 'Pan Offset = ' + str(self.panOffset) + '\n'
+		s += 'Zoom Level = ' + str(self.zoomLevel) + '\n'
+		return s
 
-	def panX(direction):
+	def panX(self, direction):
 		self.panOffset[0] += self.panIncrement*direction
-	def panY(direction):
+	def panY(self, direction):
 		self.panOffset[1] += self.panIncrement*direction
-	def zoom(direction):
-		self.zoomLevel += self.zoomIncrement*direction
+	def zoom(self, direction):
+		delta = self.zoomIncrement*direction
+		self.zoomLevel += delta
+		#self.zoomLevel += direction
+		#self.panOffset[0] -= self.zoomLevel
+		#self.panOffset[1] -= self.zoomLevel 
 
 class Viewport:
 	def __init__(self, x, y, width, height):
@@ -91,8 +100,18 @@ class BunkerView(Viewport):
 	# Draws the all of the drawLayers in order.
 	def draw(self, renderer):
 		for layer in self.drawlayers:
-			layer.draw(renderer, offset=self.camera.panOffset, zoom=self.camera.zoomLevel)
+			x = self.camera.panOffset[0]# - self.camera.zoomLevel*FLOOR.w# * len(self.tiles)
+			y = self.camera.panOffset[1]# - self.camera.zoomLevel*FLOOR.h# * len(self.tiles[0])
+			centeredOffset = [x,y]
+			layer.draw(renderer, offset=centeredOffset, zoom=self.camera.zoomLevel)
 
+
+	def zoom(self, direction):
+		self.camera.zoom(direction)
+	def panX(self, direction):
+		self.camera.panX(direction)
+	def panY(self, direction):
+		self.camera.panY(direction)
 
 	# Generates a tile map for a single floor.
 	def gen_FloorTileMap(self,floor):
@@ -180,9 +199,10 @@ class BunkerScene:
 	
 
 	def __init__(self):
-		self.bunker = Bunker(width=10,numFloors=4)
+		self.bunker = Bunker(width=50,numFloors=4)
 		self.resolution = (1200,900)
-		self.bunkerView = BunkerView(self.resolution, self.bunker)
+		cam = Camera(panIncrement=10)
+		self.bunkerView = BunkerView(self.resolution, self.bunker,camera=cam)
 	
 	def __str__(self):
 		return str(self.bunkerView)
@@ -194,9 +214,15 @@ class BunkerScene:
 		self.bunkerView.draw(renderer)
 
 
-
-
-
+	def zoom(self, direction):
+		self.bunkerView.zoom(direction)
+		print(self.bunkerView.camera)
+	def panX(self, direction):
+		self.bunkerView.panX(direction)
+		print(self.bunkerView.camera)
+	def panY(self, direction):
+		self.bunkerView.panY(direction)
+		print(self.bunkerView.camera)
 
 
 def test():
