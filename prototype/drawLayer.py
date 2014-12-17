@@ -20,7 +20,7 @@ class TiledMapLayer():
 		self.tiles = tiles
 
 
-	def draw(self, renderer, offset=[0,0], zoom=0):
+	def draw(self, renderer, panOffset=[0,0], zoom=0, zoomOffset=[0,0]):
 		listWidth = len(self.tiles)
 		listHeight = len(self.tiles[0])
 		for x in xrange(0, listWidth):
@@ -28,10 +28,10 @@ class TiledMapLayer():
 				source = self.tiles[x][y].source
 				dst = self.tiles[x][y].destination
 				
-				destination =  (dst[0]+offset[0]+x*zoom,
-						dst[1]+offset[1]+y*zoom,
-						dst[2]+zoom,
-						dst[3]+zoom)
+				destination =  (dst[0] + x*zoom + panOffset[0] - zoomOffset[0],
+						dst[1] + y*zoom + panOffset[1] - zoomOffset[1],
+						dst[2] + zoom,
+						dst[3] + zoom)
 				renderer.copy(self.spritesheet, source, destination)
 
 

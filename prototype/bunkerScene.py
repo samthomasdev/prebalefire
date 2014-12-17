@@ -14,29 +14,95 @@ RESOURCES = sdl2.ext.Resources(__file__, 'assets')
 spritesheets = dict(floor='ss_floor.png', character='hello.bmp')
 
 
-
 class Camera:
-	def __init__(self, zoomLevel=0, zoomIncrement=2, panOffset=[0,0], panIncrement=2):
-		self.zoomLevel = zoomLevel
-		self.zoomIncrement = zoomIncrement
+
+	def __init__(self, resolution=[100,100], startZoomLevel=0, maxZoomLevel=10 ,zoomRate=.2, panOffset=[0,0], panIncrement=2.0):
+		self.resolution = resolution
+
 		self.panOffset = panOffset
 		self.panIncrement = panIncrement
+
+		self.zoomLevel = startZoomLevel
+		self.maxZoomLevel = maxZoomLevel 
+		self.zoomRate = zoomRate
+		self.zoomIncrement = 1.0
+		self.zoomValue = int(self.zoomLevel * self.zoomIncrement)
+		self.zoomOffset = self.getZoomOffset()
+
 	def __str__(self):
 		s = '\nCamera State:\n'
+		s += 'Screen Resolution = ' + str(self.resolution) + '\n'
+
 		s += 'Pan Offset = ' + str(self.panOffset) + '\n'
+		s += 'Pan Offset = ' + str(self.panOffset) + '\n'
+
 		s += 'Zoom Level = ' + str(self.zoomLevel) + '\n'
+		s += 'Zoom Value = ' + str(self.zoomValue) + '\n'
+		s += 'Zoom Rate = ' + str(self.zoomRate) + '\n'
+		s += 'Zoom Increment = ' + str(self.zoomIncrement) + '\n'
+		s += 'Zoom Offset = ' + str(self.zoomOffset) + '\n'
 		return s
 
 	def panX(self, direction):
 		self.panOffset[0] += self.panIncrement*direction
+
 	def panY(self, direction):
 		self.panOffset[1] += self.panIncrement*direction
+
 	def zoom(self, direction):
-		delta = self.zoomIncrement*direction
-		self.zoomLevel += delta
-		#self.zoomLevel += direction
-		#self.panOffset[0] -= self.zoomLevel
-		#self.panOffset[1] -= self.zoomLevel 
+		if(0 <= self.zoomLevel + direction <= self.maxZoomLevel):
+			self.zoomLevel += direction
+
+			self.zoomIncrement *= 1.0
+			if(direction > 0):
+				self.zoomRate *= 1.05
+				self.zoomIncrement += self.zoomRate
+			else:
+				self.zoomIncrement -= self.zoomRate
+				self.zoomRate /= 1.05
+			'''
+			if(self.zoomLevel > 0):
+				zoomDelta = abs(self.zoomIncrement)*self.zoomLevel
+			elif(self.zoomLevel < 0):
+				zoomDelta = abs(self.zoomIncrement)*self.zoomLevel
+			else:
+				zoomDelta = 0
+			'''
+
+
+			self.zoomValue = int(abs(self.zoomIncrement)*self.zoomLevel)
+			self.zoomOffset = self.getZoomOffset()
+
+		
+
+
+
+	# Since zooming doesn't neccissarily keep the tilemap centered, this
+	# function calculates an offset for that purpose.
+	def getZoomOffset(self):
+		# get the total size of a tile, including zoom
+		tilewidth = FLOOR.w
+		tileheight = FLOOR.h
+		# calculate the number of tiles that, given their current size, can fit on the screen (horizontally&vertically)
+		numtiles_x = float(self.resolution[0])/tilewidth
+		numtiles_y = float(self.resolution[1])/tileheight
+		# calculate the centered offsets, for the x&y directions
+		x_offset = (numtiles_x/2)*self.zoomValue
+		y_offset = (numtiles_y/2)*self.zoomValue
+		# convert to int, and then return
+		offset = [int(x_offset),int(y_offset)]
+		'''
+		s = '\nDEBUG getZoomOffset()\n'
+		s += 'tilewidth = ' + str(tilewidth) + '\n'
+		s += 'tileheight = ' + str(tileheight) + '\n'
+		s += 'numtiles_x = ' + str(numtiles_x) + '\n'
+		s += 'numtiles_y = ' + str(numtiles_y) + '\n'
+		s += 'x_offset = ' + str(x_offset) + '\n'
+		s += 'y_offset = ' + str(y_offset) + '\n'
+		s += 'offset = ' + str(offset) + '\n'
+		print(s)
+		'''
+		return offset
 
 class Viewport:
 	def __init__(self, x, y, width, height):
@@ -103,7 +169,7 @@ class BunkerView(Viewport):
 			x = self.camera.panOffset[0]# - self.camera.zoomLevel*FLOOR.w# * len(self.tiles)
 			y = self.camera.panOffset[1]# - self.camera.zoomLevel*FLOOR.h# * len(self.tiles[0])
 			centeredOffset = [x,y]
-			layer.draw(renderer, offset=centeredOffset, zoom=self.camera.zoomLevel)
+			layer.draw(renderer, panOffset=centeredOffset, zoom=self.camera.zoomValue, zoomOffset=self.camera.zoomOffset)
 
 
 	def zoom(self, direction):
@@ -201,8 +267,8 @@ class BunkerScene:
 	def __init__(self):
 		self.bunker = Bunker(width=50,numFloors=4)
 		self.resolution = (1200,900)
-		cam = Camera(panIncrement=10)
-		self.bunkerView = BunkerView(self.resolution, self.bunker,camera=cam)
+		cam = Camera(resolution = self.resolution, panIncrement=10)
+		self.bunkerView = BunkerView(self.resolution, self.bunker, camera=cam)
 	
 	def __str__(self):
 		return str(self.bunkerView)
